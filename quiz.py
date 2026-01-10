@@ -1,52 +1,77 @@
-import random
+import threading
+import time
 
-quiz={"Who is the current President of India?":"Droupadi Murmu",
-           "Which country hosted the FIFA World Cup 2022?":"Qatar",
-           "Which country launched the James Webb Space Telescope?":"United States",
-           "Which country won the ICC Cricket World Cup 2019?":"England",
-           "In which sport is the term 'love' used for scoring?":"Tennis",
-           "Which programming language is known as the language of the web?":"JavaScript",
-           "Python was created by which developer?":"Guido van Rossum"}
+# ---------------- TIMER INPUT FUNCTION ----------------
+def timed_input(prompt, timeout):
+    answer = [None]
 
-options=[
-    ["Ram Nath Kovind","Droupadi Murmu","Pranab Mukherjee","Manmohan Singh"],
-    ["Qatar","Brazil","Germany","France"],
-    ["England","Australia","United States","China"],
-    ["India","Australia","New Zealand","England"],
-    ["Cricket","Tennis","Football","Hockey"],
-    ["Python","Java","C++","JavaScript"],
-    ["Guido van Rossum","James Gosling","Dennis Ritchie","Bjarne Stroustrup"]
+    def get_input():
+        answer[0] = input(prompt)
+
+    thread = threading.Thread(target=get_input)
+    thread.daemon = True
+    thread.start()
+    thread.join(timeout)
+
+    if thread.is_alive():
+        print("\n⏰ Time's up!")
+        return None
+    return answer[0]
+
+# ---------------- QUIZ QUESTIONS ----------------
+questions = [
+    {
+        "question": "Python was created by which developer?",
+        "options": ["James Gosling", "Bjarne Stroustrup", "Dennis Ritchie", "Guido van Rossum"],
+        "answer": "4"
+    },
+    {
+        "question": "Who is the current President of India?",
+        "options": ["Ram Nath Kovind", "Droupadi Murmu", "Pratibha Patil", "Narendra Modi"],
+        "answer": "2"
+    },
+    {
+        "question": "Which data type is immutable in Python?",
+        "options": ["List", "Set", "Dictionary", "Tuple"],
+        "answer": "4"
+    },
+    {
+        "question": "Which keyword is used to define a function in Python?",
+        "options": ["function", "def", "fun", "define"],
+        "answer": "2"
+    }
 ]
 
+# ---------------- MAIN QUIZ LOGIC ----------------
+score = 0
+TIME_LIMIT = 10  # seconds per question
 
-index=list(range(len(quiz)))
-random.shuffle(index)
+print("\n🎯 Welcome to the Python Quiz Game!")
+print("⏱ You have", TIME_LIMIT, "seconds for each question.\n")
 
-score=0
+for index, q in enumerate(questions, start=1):
+    print(f"\nQuestion {index}: {q['question']}")
 
-questions=list(quiz.keys())
-answers=list(quiz.values())
+    for i, option in enumerate(q["options"], start=1):
+        print(f"{i}. {option}")
 
-for i in index:
-    print("\n"+questions[i])
-    opts=options[i].copy()
-    random.shuffle(opts)
+    user_answer = timed_input("Enter your answer (1-4): ", TIME_LIMIT)
 
-    print("1. ",opts[0])
-    print("2. ",opts[1])
-    print("3. ",opts[2])
-    print("4. ",opts[3])
+    if user_answer is None:
+        print("❌ Skipped (Timeout)")
+    elif user_answer == q["answer"]:
+        print("✅ Correct!")
+        score += 1
+    else:
+        print("❌ Wrong!")
 
-    while True:
-        your_answer=input("Enter your answer (1-4): ")
-        if your_answer in ["1","2","3","4"]:
-            your_answer=int(your_answer)
-            if(opts[your_answer-1]==answers[i]):
-                print("Correct!")
-                score+=1
-            else:
-                print("Wrong! The correct answer is",answers[i])
-            break;
-        else:
-            print("Please eneter a valid number between 1 to 4.")
-print("\n Your final score is",score,"out of",len(quiz))
+# ---------------- FINAL SCORE ----------------
+print("\n📊 Quiz Finished!")
+print(f"🏆 Your Score: {score}/{len(questions)}")
+
+if score == len(questions):
+    print("🌟 Excellent! Perfect score!")
+elif score >= len(questions) // 2:
+    print("👍 Good job!")
+else:
+    print("📘 Keep practicing!")
