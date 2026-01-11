@@ -14,12 +14,17 @@ def timed_input(prompt, timeout):
     thread.join(timeout)
 
     if thread.is_alive():
-        print("\n⏰ Time's up!")
+        print("\nTime's up!")
         return None
     return answer[0]
 
 # ---------------- QUIZ QUESTIONS ----------------
 questions = [
+    {
+        "questions": "Which country hosted the FIFA World Cup 2022?",
+        "options": ["Qatar","Brazil","Germany","France"],
+        "answer": "Qatar"
+    },
     {
         "question": "Python was created by which developer?",
         "options": ["James Gosling", "Bjarne Stroustrup", "Dennis Ritchie", "Guido van Rossum"],
@@ -46,8 +51,8 @@ questions = [
 score = 0
 TIME_LIMIT = 10  # seconds per question
 
-print("\n🎯 Welcome to the Python Quiz Game!")
-print("⏱ You have", TIME_LIMIT, "seconds for each question.\n")
+print("\nWelcome to the Python Quiz Game!")
+print("You have", TIME_LIMIT, "seconds for each question.\n")
 
 for index, q in enumerate(questions, start=1):
     print(f"\nQuestion {index}: {q['question']}")
@@ -58,20 +63,20 @@ for index, q in enumerate(questions, start=1):
     user_answer = timed_input("Enter your answer (1-4): ", TIME_LIMIT)
 
     if user_answer is None:
-        print("❌ Skipped (Timeout)")
+        print("Skipped (Timeout)")
     elif user_answer == q["answer"]:
-        print("✅ Correct!")
+        print("Correct!")
         score += 1
     else:
-        print("❌ Wrong!")
+        print("Wrong!")
 
 # ---------------- FINAL SCORE ----------------
-print("\n📊 Quiz Finished!")
-print(f"🏆 Your Score: {score}/{len(questions)}")
+print("\nQuiz Finished!")
+print("Your Score: score/len(questions)")
 
 if score == len(questions):
-    print("🌟 Excellent! Perfect score!")
+    print("Excellent! Perfect score!")
 elif score >= len(questions) // 2:
-    print("👍 Good job!")
+    print("Good job!")
 else:
-    print("📘 Keep practicing!")
+    print("Keep practicing!")
